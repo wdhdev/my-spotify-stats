@@ -11,14 +11,21 @@ const streamsUrl = `https://api.stats.fm/api/v1/users/${main.spotifyId}/streams/
 
 export default async function (client: Client, Discord: any) {
     try {
+        console.log("\n[INFO] -----------------------");
+        console.log("[INFO] Fetching user data...");
         const userRes = await axios.get(userUrl); // Fetch user data
-        const res = await axios.get(streamsUrl); // Fetch recent streams data
-
         const user = userRes.data.item; // Get user info
-        const streams = res.data.items.slice(0, 10); // Get the 10 most recent streams 
+        console.log(`[INFO] Found user: ${user.displayName} (${user.customId})`);
+
+        console.log("[INFO] Fetching recent streams...");
+        const streamRes = await axios.get(streamsUrl); // Fetch recent streams data
+        console.log(`[INFO] Found ${streamRes.data.items.length} recent streams.`);
+        const streams = streamRes.data.items.slice(0, 10); // Get the 10 most recent streams
+        console.log(`[INFO] Using the last ${streams.length} recent streams.`);
 
         const songs: string[] = [];
 
+        console.log("[INFO] Building embed...");
         const embed = new Discord.EmbedBuilder()
             .setColor(embeds.default)
             .setAuthor({ name: user.displayName, iconURL: user.image, url: `https://stats.fm/${user.customId}` })
@@ -41,8 +48,19 @@ export default async function (client: Client, Discord: any) {
             )
 
         // Add each song to the array
+        console.log("[INFO] Formatting streams...");
         streams.forEach((stream: any, i: number) => {
-            songs.push(`- [${escapeMarkdown(stream.track.name)}](https://stats.fm/track/${stream.track.id}) (${humaniseTime(stream.durationMs)})`);
+            // Get the artists for the song
+            const artists: string[] = [];
+            // Add each artist to the array
+            stream.track.artists.forEach((artist: Artist) => {
+                artists.push(`[${artist.name}](https://stats.fm/artist/${artist.id})`);
+            })
+
+            // Convert ISO 8601 timestamp to milliseconds
+            const timestamp = Date.parse(stream.endTime).toString().slice(0, -3);
+
+            songs.push(`- [**${escapeMarkdown(stream.track.name)}**](https://stats.fm/track/${stream.track.id}) by ${artists.join(", ")} (<t:${timestamp}:R>)`);
         })
 
         embed.setDescription(cap(songs.join("\n"), 2000));
@@ -57,6 +75,8 @@ export default async function (client: Client, Discord: any) {
         // Get the last message sent by the bot
         const message = botMessages.first();
 
+        console.log(`[INFO] Posting stats for ${user.displayName}...`);
+
         if(message) {
             // Edit the original message
             message.edit({ embeds: [embed], components: [buttons] });
@@ -64,7 +84,15 @@ export default async function (client: Client, Discord: any) {
             // Send a new message
             channel.send({ embeds: [embed], components: [buttons] });
         }
+
+        console.log("[INFO] Stats posted successfully!");
+        console.log("[INFO] -----------------------");
     } catch(err) {
         console.error(err);
     }
+}
+
+export type Artist = {
+    id: number;
+    name: string;
 }
