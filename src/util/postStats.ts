@@ -47,7 +47,8 @@ export default async function (client: Client, Discord: any) {
 
         embed.setDescription(cap(songs.join("\n"), 2000));
 
-        const channel = client.channels.cache.get(main.channel) as TextChannel;
+        // Get the channel to post the message in
+        const channel = client.channels.cache.get(main.channel) as TextChannel || await client.channels.fetch(main.channel) as TextChannel;
 
         // Fetch the last 10 messages sent by the bot
         const messages = await channel.messages.fetch({ limit: 10 });
