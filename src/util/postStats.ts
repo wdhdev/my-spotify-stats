@@ -49,8 +49,6 @@ export default async function (client: Client, Discord: any) {
 
         const channel = client.channels.cache.get(main.channel) as TextChannel;
 
-        if(!channel) throw new Error("Channel not found");
-
         // Fetch the last 10 messages sent by the bot
         const messages = await channel.messages.fetch({ limit: 10 });
         // Filter out any messages that weren't sent by the bot
