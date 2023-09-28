@@ -1,21 +1,31 @@
-import { Client, TextChannel } from "discord.js";
+import { Client, ColorResolvable, TextChannel } from "discord.js";
+import { ExtraVariables } from "../index";
 
 import axios from "axios";
 import cap from "./cap";
 import { embeds, emojis as emoji, main } from "../config";
 import escapeMarkdown from "../functions/escapeMarkdown";
-import humaniseTime from "../functions/humaniseTime";
 
 const userUrl = `https://api.stats.fm/api/v1/users/${main.spotifyId}`;
 const streamsUrl = `https://api.stats.fm/api/v1/users/${main.spotifyId}/streams/recent`;
 
-export default async function (client: Client, Discord: any) {
+export default async function (client: Client & ExtraVariables, Discord: typeof import("discord.js")) {
     try {
         console.log("\n[INFO] -----------------------");
+
+        // Wait out cooldown if the last refresh was less than 30 seconds ago
+        if(Date.now() - client.lastRefresh < 30 * 1000) {
+            console.log("[INFO] Refresh is on cooldown, waiting before refreshing embed...");
+            await sleep(30 * 1000 - (Date.now() - client.lastRefresh));
+            console.log("[INFO] Cooldown over, refreshing embed...");
+        }
+
+        client.lastRefresh = Date.now();
+
         console.log("[INFO] Fetching user data...");
         const userRes = await axios.get(userUrl); // Fetch user data
         const user = userRes.data.item; // Get user info
-        console.log(`[INFO] Found user: ${user.displayName} (${user.customId})`);
+        console.log(`[INFO] Found user: ${user.displayName} (${user.id})`);
 
         console.log("[INFO] Fetching recent streams...");
         const streamRes = await axios.get(streamsUrl); // Fetch recent streams data
@@ -27,13 +37,18 @@ export default async function (client: Client, Discord: any) {
 
         console.log("[INFO] Building embed...");
         const embed = new Discord.EmbedBuilder()
-            .setColor(embeds.default)
+            .setColor(embeds.default as ColorResolvable)
             .setAuthor({ name: user.displayName, iconURL: user.image })
             .setTitle("Recently Played Songs")
             .setTimestamp()
 
-        const buttons = new Discord.ActionRowBuilder()
+        const buttons: any = new Discord.ActionRowBuilder()
             .addComponents (
+                new Discord.ButtonBuilder()
+                    .setStyle(Discord.ButtonStyle.Secondary)
+                    .setCustomId("refresh-data")
+                    .setEmoji("🔄"),
+
                 new Discord.ButtonBuilder()
                     .setStyle(Discord.ButtonStyle.Link)
                     .setEmoji(emoji.spotify)
@@ -90,6 +105,14 @@ export default async function (client: Client, Discord: any) {
     } catch(err) {
         console.error(err);
     }
+}
+
+function sleep(ms: number) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(null);
+        }, ms);
+    });
 }
 
 export type Artist = {
