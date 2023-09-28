@@ -28,7 +28,7 @@ export default async function (client: Client, Discord: any) {
         console.log("[INFO] Building embed...");
         const embed = new Discord.EmbedBuilder()
             .setColor(embeds.default)
-            .setAuthor({ name: user.displayName, iconURL: user.image, url: `https://stats.fm/${user.customId}` })
+            .setAuthor({ name: user.displayName, iconURL: user.image })
             .setTitle("Recently Played Songs")
             .setTimestamp()
 
