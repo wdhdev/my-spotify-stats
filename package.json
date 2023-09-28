@@ -1,0 +1,21 @@
+{
+  "name": "my-spotify-stats",
+  "version": "1.0.0",
+  "description": "Send your recently played songs to a Discord channel every 5 minutes.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "npm run build && node dist/index.js"
+  },
+  "author": "William Harrison",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.7.1",
+    "typescript": "^5.2.2"
+  }
+}
