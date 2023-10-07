@@ -1,5 +1,4 @@
 import { Client, ColorResolvable, TextChannel } from "discord.js";
-import { ExtraVariables } from "../index";
 
 import axios from "axios";
 import cap from "./cap";
@@ -9,18 +8,9 @@ import escapeMarkdown from "../functions/escapeMarkdown";
 const userUrl = `https://api.stats.fm/api/v1/users/${main.spotifyId}`;
 const streamsUrl = `https://api.stats.fm/api/v1/users/${main.spotifyId}/streams/recent`;
 
-export default async function (client: Client & ExtraVariables, Discord: typeof import("discord.js")) {
+export default async function (client: Client, Discord: typeof import("discord.js")) {
     try {
         console.log("\n[INFO] -----------------------");
-
-        // Wait out cooldown if the last refresh was less than 30 seconds ago
-        if(Date.now() - client.lastRefresh < 30 * 1000) {
-            console.log("[INFO] Refresh is on cooldown, waiting before refreshing embed...");
-            await sleep(30 * 1000 - (Date.now() - client.lastRefresh));
-            console.log("[INFO] Cooldown over, refreshing embed...");
-        }
-
-        client.lastRefresh = Date.now();
 
         console.log("[INFO] Fetching user data...");
         const userRes = await axios.get(userUrl); // Fetch user data
@@ -44,11 +34,6 @@ export default async function (client: Client & ExtraVariables, Discord: typeof 
 
         const buttons: any = new Discord.ActionRowBuilder()
             .addComponents (
-                new Discord.ButtonBuilder()
-                    .setStyle(Discord.ButtonStyle.Secondary)
-                    .setCustomId("refresh-data")
-                    .setEmoji("🔄"),
-
                 new Discord.ButtonBuilder()
                     .setStyle(Discord.ButtonStyle.Link)
                     .setEmoji(emoji.spotify)
@@ -105,14 +90,6 @@ export default async function (client: Client & ExtraVariables, Discord: typeof 
     } catch(err) {
         console.error(err);
     }
-}
-
-function sleep(ms: number) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            resolve(null);
-        }, ms);
-    });
 }
 
 export type Artist = {
