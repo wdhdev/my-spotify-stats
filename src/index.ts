@@ -13,9 +13,9 @@ client.once("ready", async () => {
     await postStats(client, Discord);
 
     setInterval(async () => {
-        console.log("\n[INFO] Automatic data refresh at 2 minute interval");
+        console.log("\n[INFO] Automatic data refresh at 5 minute interval");
         await postStats(client, Discord);
-    }, 2 * 60 * 1000) // Refresh data every 2 minutes
+    }, 5 * 60 * 1000) // Refresh data every 5 minutes
 })
 
 client.login(process.env.token);
