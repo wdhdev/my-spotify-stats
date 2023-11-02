@@ -5,7 +5,7 @@ const client = new Discord.Client({
     presence: { 
         activities: [
             {
-                name: "🎵 Listening to music",
+                name: "🎧 Listening to music",
                 type: Discord.ActivityType.Custom
             }
         ],
