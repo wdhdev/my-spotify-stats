@@ -1,4 +1,4 @@
 # My Spotify Stats
-Send your recently played songs to a Discord channel every 5 minutes.
+View your recently played songs in a Discord channel.
 
 ![Languages](https://skillicons.dev/icons?i=nodejs,ts)

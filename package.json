@@ -1,7 +1,7 @@
 {
   "name": "my-spotify-stats",
   "version": "1.0.0",
-  "description": "Send your recently played songs to a Discord channel every 5 minutes.",
+  "description": "View your recently played songs in a Discord channel.",
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
