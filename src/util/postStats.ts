@@ -10,22 +10,14 @@ const streamsUrl = `https://api.stats.fm/api/v1/users/${main.spotifyId}/streams/
 
 export default async function (client: Client, Discord: typeof import("discord.js")) {
     try {
-        console.log("\n[INFO] -----------------------");
-
-        console.log("[INFO] Fetching user data...");
         const userRes = await axios.get(userUrl); // Fetch user data
         const user = userRes.data.item; // Get user info
-        console.log(`[INFO] Found user: ${user.displayName} (${user.id})`);
 
-        console.log("[INFO] Fetching recent streams...");
         const streamRes = await axios.get(streamsUrl); // Fetch recent streams data
-        console.log(`[INFO] Found ${streamRes.data.items.length} recent streams.`);
         const streams = streamRes.data.items.slice(0, 10); // Get the 10 most recent streams
-        console.log(`[INFO] Using the last ${streams.length} recent streams.`);
 
         const songs: string[] = [];
 
-        console.log("[INFO] Building embed...");
         const embed = new Discord.EmbedBuilder()
             .setColor(embeds.default as ColorResolvable)
             .setAuthor({ name: user.displayName, iconURL: user.image })
@@ -48,7 +40,6 @@ export default async function (client: Client, Discord: typeof import("discord.j
             )
 
         // Add each song to the array
-        console.log("[INFO] Formatting streams...");
         streams.forEach((stream: any, i: number) => {
             // Get the artists for the song
             const artists: string[] = [];
@@ -75,8 +66,6 @@ export default async function (client: Client, Discord: typeof import("discord.j
         // Get the last message sent by the bot
         const message = botMessages.first();
 
-        console.log(`[INFO] Posting stats for ${user.displayName}...`);
-
         if(message) {
             // Edit the original message
             message.edit({ embeds: [embed], components: [buttons] });
@@ -84,9 +73,6 @@ export default async function (client: Client, Discord: typeof import("discord.j
             // Send a new message
             channel.send({ embeds: [embed], components: [buttons] });
         }
-
-        console.log("[INFO] Stats posted successfully!");
-        console.log("[INFO] -----------------------");
     } catch(err) {
         console.error(err);
     }

@@ -21,13 +21,28 @@ client.once("ready", async () => {
     console.log(`Logged in as: ${client.user.tag}`);
 
     // Refresh data on startup
-    console.log("\n[INFO] Automatic data refresh on startup");
     await postStats(client, Discord);
 
     setInterval(async () => {
-        console.log("\n[INFO] Automatic data refresh at 2 minute interval");
         await postStats(client, Discord);
     }, 2 * 60 * 1000) // Refresh data every 2 minutes
+
+    // Automatic Git Pull
+    const { exec } = require("child_process");
+
+    try {
+        setInterval(() => {
+            exec("git pull", (err: any, stdout: any) => {
+                if(err) return console.log(err);
+                if(stdout.includes("Already up to date.")) return;
+
+                console.log(stdout);
+                process.exit();
+            })
+        }, 30 * 1000) // 30 seconds
+    } catch(err) {
+        console.log(err);
+    }
 })
 
 client.login(process.env.token);
