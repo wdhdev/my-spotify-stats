@@ -14,7 +14,7 @@ const client = new Discord.Client({
 })
 
 require("dotenv").config();
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
 import postStats from "./util/postStats";
 
