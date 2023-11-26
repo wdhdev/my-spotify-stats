@@ -14,6 +14,7 @@ const client = new Discord.Client({
 })
 
 require("dotenv").config();
+const { exec } = require("child_process");
 
 import postStats from "./util/postStats";
 
@@ -28,8 +29,6 @@ client.once("ready", async () => {
     }, 2 * 60 * 1000) // Refresh data every 2 minutes
 
     // Automatic Git Pull
-    const { exec } = require("child_process");
-
     try {
         setInterval(() => {
             exec("git pull", (err: any, stdout: any) => {
