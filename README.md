@@ -3,8 +3,6 @@ This is due to stats.fm's API not being available for use by the public. This is
 
 This code is now purely for educational purposes only, it should not be used.
 
-![image](https://github.com/wdhdev/my-spotify-stats/assets/87287585/7029a55d-c0b4-4488-bfd1-e31284de3a23)
-
 ---
 
 # My Spotify Stats
